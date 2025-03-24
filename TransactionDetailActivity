@@ -1,0 +1,46 @@
+import android.os.Bundle
+import android.widget.TextView
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
+import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+
+class TransactionDetailActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_transaction_detail)
+
+        val giftCardId = intent.getStringExtra("giftCardId")
+        val giftCardName = intent.getStringExtra("giftCardName")
+        val date = intent.getStringExtra("date")
+
+        val giftCardNameTextView: TextView = findViewById(R.id.giftCardName)
+        val dateTextView: TextView = findViewById(R.id.date)
+        val barcodeImageView: ImageView = findViewById(R.id.barcodeImage)
+
+        giftCardNameTextView.text = giftCardName
+        dateTextView.text = date
+
+        // Generate barcode (For simplicity, using giftCardId as the barcode content)
+        val barcodeBitmap = generateBarcode(giftCardId ?: "")
+        barcodeImageView.setImageBitmap(barcodeBitmap)
+    }
+
+    private fun generateBarcode(content: String): Bitmap {
+        val writer = QRCodeWriter()
+        val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 600, 600)
+
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bitmap.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+            }
+        }
+        return bitmap
+    }
+}

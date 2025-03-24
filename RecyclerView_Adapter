@@ -1,0 +1,34 @@
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class TransactionAdapter(
+    private val transactions: List<Transaction>,
+    private val onItemClick: (Transaction) -> Unit
+) : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_transaction, parent, false)
+        return TransactionViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
+        val transaction = transactions[position]
+        holder.bind(transaction)
+    }
+
+    override fun getItemCount(): Int = transactions.size
+
+    inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val giftCardName: TextView = itemView.findViewById(R.id.giftCardName)
+        private val date: TextView = itemView.findViewById(R.id.date)
+
+        fun bind(transaction: Transaction) {
+            giftCardName.text = transaction.giftCardName
+            date.text = transaction.date
+            itemView.setOnClickListener { onItemClick(transaction) }
+        }
+    }
+}
